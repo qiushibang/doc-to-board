@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+.cache/
+
+# Output (generated artifacts)
+output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
