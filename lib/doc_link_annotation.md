@@ -1,126 +1,69 @@
 # 文档链接标注方案
 
-> 在画板中标注文档链接，让用户可以点击跳转查看原文。
+> 在画板中标注文档来源，让用户能识别并追溯。
 
-## 技术可行性分析
+## 核心约束
 
-### 飞书画板超链接能力
-经过实际验证（whiteboard-cli 输出的 OpenAPI JSON），当前画板节点**不支持超链接字段**。
-node 的所有字段为：id, type, x, y, width, height, text, style, composite_shape。
+**RULES.md 禁止在画板上写 source citations、tokens、file paths。** 因此画板内不做"可点击链接"，只做最小标识 + agent 消息中给完整链接。
 
-### SVG `<a>` 标签测试
-飞书 SVG 画板渲染时，`<a>` 标签内的 `<text>` 会被展平为普通文本节点，超链接信息丢失。
+## 标注策略（三层）
 
-### 可行的替代方案
+| 层级 | 位置 | 内容 | 谁来执行 |
+|------|------|------|---------|
+| **L1 画板标识** | 文档标题栏（深色区域）内 | 灰色 9px 小字：token 前 8 位 + `...` | SVG 生成时 |
+| **L2 关联高亮** | 有跨文档关联的章节节点 | 用 placeholder 色填充 + 加粗边框 | SVG 生成时 |
+| **L3 完整链接** | Agent 回复消息 | 文档标题 + 完整飞书 URL + 关联说明 | 交付时 |
 
-由于画板原生不支持超链接，采用以下三种互补方案：
+## L1 画板标识规范
 
----
+每个文档列的标题栏（`fill: ink-black` 区域），在标题文字下方追加一行灰色小字：
 
-## 方案 1：节点内标注短链接（推荐，始终使用）
-
-在每个文档/章节节点中，用小字标注来源链接的关键标识符。
-
-**实现方式：**
-- 在章节标题旁用灰色小字显示文档名缩写或链接尾部 token
-- 完整链接放在节点摘要中，便于搜索
-
-**SVG 示例：**
 ```xml
-<text x="100" y="50" font-size="13" font-weight="bold" fill="#1A1A16">Aiden 平台</text>
-<text x="100" y="66" font-size="10" fill="#8A8A80">来源: KZlbdMZF...</text>
+<rect x="30" y="100" width="540" height="60" rx="6" fill="#1A1A16"/>
+<text x="300" y="130" text-anchor="middle" font-size="18" font-weight="bold" fill="#FAFADF">OpenClaw 一键打通研发全流程</text>
+<text x="300" y="148" text-anchor="middle" font-size="9" fill="#8A8A80">J1pWdBJB...</text>
 ```
 
-**优点：** 画板内直接可读，无需点击
-**缺点：** 不能跳转，需要手动复制 token 去找文档
+**注意：**
+- 只写 token 前 8 位 + `...`，不写完整 URL
+- 只在标题栏写一次，不在每个 H1 节点重复标注
+- 不写 📄 图标前缀（RULES.md 禁止装饰性元素）
 
----
+## L2 关联高亮规范
 
-## 方案 2：画板下方文本块放完整链接清单
+存在跨文档关联的章节节点，用以下视觉区分：
+- 填充色：`cream-paper-3`（Monochrome 风格）或对应风格的 placeholder 色
+- 边框：`stroke-width: 1`（普通节点是 0.5）
+- 节点文本中标注：`← 关联文档X`
 
-在画板的底部区域（或每个文档区域底部），用一个文本节点列出该文档的完整链接。
+## L3 交付消息格式
 
-**SVG 示例：**
-```xml
-<!-- 文档A 区域底部 -->
-<text x="40" y="580" font-size="10" fill="#5E5E54">
-  📄 完整链接: https://bytedance.sg.larkoffice.com/docx/KZlbdMZF...
-</text>
-```
-
-**优点：** 完整链接可直接复制到浏览器打开
-**缺点：** 长链接会撑大画布
-
----
-
-## 方案 3：交付消息附带链接（推荐，与方案1/2配合）
-
-在 agent 的回复消息中，提供结构化的链接清单，画板只负责可视化。
-
-**agent 回复示例：**
 ```
 画板已生成 ✅
 
-📄 文档链接：
-  • 文档A「Agent & PMO 学习文档索引」
-    https://bytedance.sg.larkoffice.com/docx/KZlbdMZF...
-  • 文档B「TTADK 实战指南」
-    https://bytedance.sg.larkoffice.com/wiki/G7RcwK0S...
+📄 源文档：
+  • OpenClaw 一键打通研发全流程
+    https://bytedance.larkoffice.com/docx/J1pWdBJB...
+  • LLMBox 一键接入 SOTA 模型
+    https://bytedance.larkoffice.com/docx/LclTdTjL...
+  • Hermes 接入 LLMBox 配置教程
+    https://bytedance.sg.larkoffice.com/docx/JNCzdD5d...
 
-💡 画板中标注的「KZlbdMZF...」等 token 即为文档 ID 的一部分，
-   可直接在飞书中搜索定位。
+🔗 跨文档关联：
+  • A 快速上手 → B 概述（A 使用 B 作为模型服务）
+  • C Step1 方式A → A（C 依赖 A 安装 gdpa_openclaw）
+  • C Step1 方式B → B（C 依赖 B llmbox 缓存）
 ```
 
----
+## 数据层
 
-## 数据结构更新
-
-### DocNode meta 字段
-
+DocNode meta 必须保留完整信息供 L3 使用：
 ```json
 {
-  "id": "h1-1",
-  "title": "第一章",
   "meta": {
-    "doc_title": "文档A标题",
-    "doc_url": "https://...",
-    "doc_token": "KZlbdMZF...",
-    "word_count": 2000,
-    "has_table": false,
-    "has_code": false,
-    "section_url": "https://...#heading-xxx",
-    "section_token": "heading-block-token"
+    "doc_title": "完整标题",
+    "doc_url": "完整飞书链接",
+    "doc_token": "token"
   }
 }
 ```
-
-### 多文档关联 meta
-
-```json
-{
-  "cross_doc_relations": [
-    {
-      "from_doc": "KZlbdMZF...",
-      "from_title": "文档A",
-      "from_section": "h1-2",
-      "to_doc": "G7RcwK0S...",
-      "to_title": "文档B",
-      "to_section": "h1-1",
-      "type": "reference",
-      "description": "引用了文档B的方案设计",
-      "from_url": "https://...",
-      "to_url": "https://..."
-    }
-  ]
-}
-```
-
----
-
-## 实现优先级
-
-| 优先级 | 方案 | 适用场景 |
-|--------|------|---------|
-| P0 | 方案 1（节点标注短 token） | 所有画板，始终执行 |
-| P0 | 方案 3（消息附带链接） | agent 回复时附带 |
-| P1 | 方案 2（底部完整链接） | 文档数 ≤ 3 时 |

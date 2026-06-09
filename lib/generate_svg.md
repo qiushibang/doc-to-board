@@ -67,26 +67,43 @@
 
 ### 文档链接标注（所有画板必须执行）
 
-**每个文档区域必须标注来源链接，采用三层标注策略：**
+**约束：RULES.md 禁止在画板上写 source citations、tokens、file paths。因此链接标注策略调整为：**
 
-1. **区域标题**：文档标题节点旁用灰色小字显示 `token 前 8 位 + ...`
-2. **节点底部**：每个 H1 章节节点下用 10px 灰色字标注 `📄 doc_token...`
-3. **交付消息**：agent 回复时附带完整的文档链接清单
+1. **文档标题栏（唯一标识）**：在每个文档列的深色标题栏中，用一行灰色小字（9px, fill=ink-graphite-light）写 **token 前 8 位 + ...** 作为标识符，帮助用户在多个文档列中区分来源。这是唯一允许的画板内链接标注。
+2. **跨文档关联节点高亮**：存在跨文档关联的章节节点，用 `fill: cream-paper-3`（或对应风格的 placeholder 色）加粗边框（`stroke-width: 1`）来区分，并在节点文本中用 `← 关联文档X` 标注。
+3. **完整链接在 agent 回复消息中给出**：画板完成后，agent 回复中附带完整的文档链接清单。**不在画板上写完整 URL、不写 📄 图标前缀、不在每个 H1 节点下方重复标注 token。**
 
-**SVG 示例：**
+**SVG 示例（标题栏内标识）：**
 ```xml
-<!-- 文档A 标题区域 -->
-<text x="100" y="130" text-anchor="middle" font-size="17" font-weight="bold" fill="#FAFADF">Vibe Coding</text>
-<text x="100" y="145" text-anchor="middle" font-size="9" fill="#8A8A80">KZlbdMZF...</text>
-
-<!-- H1 章节节点 -->
-<text x="40" y="230" font-size="14" font-weight="bold" fill="#1A1A16">Aiden 平台</text>
-<text x="40" y="244" font-size="9" fill="#8A8A80">📄 KZlbdMZF...</text>
+<rect x="30" y="100" width="540" height="60" rx="6" fill="#1A1A16"/>
+<text x="300" y="130" text-anchor="middle" font-size="18" font-weight="bold" fill="#FAFADF">OpenClaw 一键打通研发全流程</text>
+<text x="300" y="148" text-anchor="middle" font-size="9" fill="#8A8A80">J1pWdBJB...</text>
 ```
 
-**多文档关联线的标注：**
-- 关联线上用标签显示关系类型
-- 关联线两端各标注 `doc_token...`（10px 灰色字）
+### 多文档画板布局硬规则
+
+**以下规则针对 2+ 文档画板，必须遵守：**
+
+1. **动态画布高度**：
+   - 计算所有文档列中最后一个节点的 bottom 坐标，取最大值
+   - SVG `height` = 最大 bottom + 图例区域高度 + 30px padding
+   - **禁止**写死一个很大的 height 然后底部留白
+
+2. **文档列高度独立**：
+   - 每个文档列的背景矩形高度 = 该列最后一个内容节点的 bottom + 20px
+   - 不同列高度可以不同，**不要**把所有列拉到同一高度
+
+3. **跨文档关联线坐标避让**：
+   - 起止点必须是**目标节点的上下边缘中点**（计算得出，不能估算）
+   - 多条线穿过同一文档列间隙时，必须**垂直间距 ≥ 30px**
+   - 按关联的 Y 坐标排序，依次分布在间隙中的不同高度
+   - **禁止**多条线重叠或交汇于同一点
+   - 关联线优先走水平路线（在同一高度横穿间隙），避免斜线穿越多个内容区域
+
+4. **列间距**：
+   - 2 文档：每列宽 700px，间隙 100px，总宽 1500px
+   - 3 文档：每列宽 540px，间隙 30px，总宽 1680px
+   - 4+ 文档：每列宽 400px，间隙 20px
 
 ### 硬规则（来自 lib/whiteboard-rules/RULES.md）
 - **单字体**：不设 `font-family`，只用 size/weight/casing/letter-spacing
