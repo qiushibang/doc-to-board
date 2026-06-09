@@ -27,8 +27,12 @@
   "cross_doc_relations": [
     {
       "from_doc": "tokenA",
+      "from_title": "文档A标题",
+      "from_url": "文档A完整链接",
       "from_section": "h1-2",
       "to_doc": "tokenB",
+      "to_title": "文档B标题",
+      "to_url": "文档B完整链接",
       "to_section": "h1-1",
       "type": "reference",
       "description": "文档A的第2章引用了文档B的第1章概念",

@@ -65,6 +65,29 @@
 
 ## SVG 编写规则
 
+### 文档链接标注（所有画板必须执行）
+
+**每个文档区域必须标注来源链接，采用三层标注策略：**
+
+1. **区域标题**：文档标题节点旁用灰色小字显示 `token 前 8 位 + ...`
+2. **节点底部**：每个 H1 章节节点下用 10px 灰色字标注 `📄 doc_token...`
+3. **交付消息**：agent 回复时附带完整的文档链接清单
+
+**SVG 示例：**
+```xml
+<!-- 文档A 标题区域 -->
+<text x="100" y="130" text-anchor="middle" font-size="17" font-weight="bold" fill="#FAFADF">Vibe Coding</text>
+<text x="100" y="145" text-anchor="middle" font-size="9" fill="#8A8A80">KZlbdMZF...</text>
+
+<!-- H1 章节节点 -->
+<text x="40" y="230" font-size="14" font-weight="bold" fill="#1A1A16">Aiden 平台</text>
+<text x="40" y="244" font-size="9" fill="#8A8A80">📄 KZlbdMZF...</text>
+```
+
+**多文档关联线的标注：**
+- 关联线上用标签显示关系类型
+- 关联线两端各标注 `doc_token...`（10px 灰色字）
+
 ### 硬规则（来自 lib/whiteboard-rules/RULES.md）
 - **单字体**：不设 `font-family`，只用 size/weight/casing/letter-spacing
 - **原生形状**：只用 `<rect>`（rx 圆角）、`<circle>`、`<ellipse>`、`<line>`、`<polyline>`、`<text>`

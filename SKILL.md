@@ -118,8 +118,11 @@ feishu_ask_user_question({
 拿到 board_token 后，执行 SVG → whiteboard-cli 上传流程。
 
 #### Step 5: 交付
-- 给用户飞书文档链接
+- 给用户飞书文档链接（画板所在文档）
 - 附带画板渲染截图（通过 `whiteboard +query --output_as image` 获取）
+- **附带所有源文档的完整链接清单**（按画板中出现的顺序排列）
+  - 每条包含：文档标题 + 完整飞书链接
+  - 多文档时标注关联关系和对应章节
 - 告知用户可切换配色风格
 
 ## 文件结构
