@@ -4,9 +4,9 @@
 
 ## 前置步骤
 
-1. 读取 `beautiful-feishu-whiteboard/RULES.md` — 了解 SVG 画板的硬规则
-2. 读取 `beautiful-feishu-whiteboard/CATALOG.md` — 了解可用配色风格
-3. 选择一个配色风格（默认 Monochrome），读取对应 `templates/<slug>/design.md`
+1. 读取 `lib/whiteboard-rules/RULES.md` — 了解 SVG 画板的硬规则
+2. 读取 `lib/whiteboard-rules/CATALOG.md` — 了解可用配色风格
+3. 选择一个配色风格（默认 Monochrome），读取对应 `lib/whiteboard-rules/templates/<slug>/design.md`
 
 ## 画板布局策略
 
@@ -65,7 +65,7 @@
 
 ## SVG 编写规则
 
-### 硬规则（来自 RULES.md）
+### 硬规则（来自 lib/whiteboard-rules/RULES.md）
 - **单字体**：不设 `font-family`，只用 size/weight/casing/letter-spacing
 - **原生形状**：只用 `<rect>`（rx 圆角）、`<circle>`、`<ellipse>`、`<line>`、`<polyline>`、`<text>`
 - **箭头用 marker-end**：不手绘箭头三角形

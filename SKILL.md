@@ -45,7 +45,8 @@ description: >
 - 多文档额外分析跨文档关联（引用/对应/冲突/互补）
 
 #### Step 3: 画板生成
-- 基于 beautiful-feishu-whiteboard 的 RULES.md 和配色体系
+- 生成 SVG 前，**必须先读取 `lib/whiteboard-rules/RULES.md`**（SVG 画板硬规则）
+- 选择配色风格时，读取 `lib/whiteboard-rules/CATALOG.md` 和对应 `lib/whiteboard-rules/templates/<slug>/design.md`
 - 从解析结果生成 SVG 画板：
   - 单文档：层级结构图 / 思维导图 / 大纲图
   - 多文档：跨文档关系图 / 对比矩阵
@@ -126,22 +127,20 @@ feishu_ask_user_question({
 ```
 doc-to-board/
 ├── SKILL.md                        # 本文件
+├── README.md                       # 项目说明
 ├── scripts/
-│   ├── preflight.sh                # 依赖检查
-│   ├── fetch_doc.sh                # 文档获取封装
-│   └── render_board.sh             # SVG 渲染与上传封装
+│   └── preflight.sh                # 依赖检查
 ├── lib/
-│   ├── parse_structure.md          # 文档结构解析指令（给 LLM 的 prompt）
+│   ├── parse_structure.md          # 文档结构解析指令
 │   ├── analyze_multi_doc.md       # 多文档关联分析指令
-│   ├── generate_svg.md             # SVG 生成指令
-│   └── board_templates.md          # 画板模板说明
-├── beautiful-feishu-whiteboard/    # 画板渲染子模块（集成）
-│   ├── RULES.md                   # SVG 画板硬规则
-│   ├── CATALOG.md                 # 35 种配色风格目录
-│   ├── templates/                 # 各风格配色定义
-│   └── scripts/
-│       └── preflight.sh           # 画板依赖检查
-└── README.md                      # 项目说明
+│   ├── generate_svg.md             # SVG 画板生成指令
+│   ├── board_templates.md          # 画板模板说明
+│   └── whiteboard-rules/           # 飞书 SVG 画板规则与配色
+│       ├── RULES.md               # SVG 画板硬规则（必须遵守）
+│       ├── CATALOG.md             # 35 种配色风格目录
+│       ├── templates/             # 各风格配色定义
+│       └── assets/                # 风格预览图
+└── output/                         # 渲染输出（gitignored）
 ```
 
 ## LLM 工作指南
@@ -200,7 +199,7 @@ lark-cli whiteboard +query \
 ## 配色风格选择
 
 默认使用 **Monochrome**（克制、专业、适合文档结构图）。
-如用户有偏好，参考 `beautiful-feishu-whiteboard/CATALOG.md` 选择。
+如用户有偏好，参考 `lib/whiteboard-rules/CATALOG.md` 选择。
 可用的风格分类：
 - **Restrained**：Monochrome、Grove、Macchiato、Reading Room 等（严肃/专业）
 - **Balanced**：Coral、Lime Slab、Pin & Paper、Soft Editorial 等（通用/现代）

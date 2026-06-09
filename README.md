@@ -44,11 +44,13 @@ doc-to-board/
 │   ├── parse_structure.md          # 文档结构解析指令
 │   ├── analyze_multi_doc.md       # 多文档关联分析指令
 │   ├── generate_svg.md            # SVG 画板生成指令
-│   └── board_templates.md          # 画板模板说明
-└── beautiful-feishu-whiteboard/    # 画板渲染子模块
-    ├── RULES.md                   # SVG 画板硬规则
-    ├── CATALOG.md                 # 35 种配色风格
-    └── templates/                 # 各风格定义
+│   ├── board_templates.md          # 画板模板说明
+│   └── whiteboard-rules/           # SVG 画板规则与配色体系
+│       ├── RULES.md               # SVG 硬规则
+│       ├── CATALOG.md             # 35 种配色风格
+│       ├── templates/             # 各风格配色定义
+│       └── assets/                # 风格预览图
+└── output/                         # 渲染输出（gitignored）
 ```
 
 ## License
